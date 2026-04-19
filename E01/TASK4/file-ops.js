@@ -7,8 +7,8 @@ async function fileOperations() {
     const time = new Date().toLocaleTimeString();
 
     const content = `Name: ${name}
-                    Date: ${date}
-                    Time: ${time}`;
+      Date: ${date}
+      Time: ${time}`;
 
     await writeFile("output.txt", content);
     const fileContent = await readFile("output.txt", "utf8");

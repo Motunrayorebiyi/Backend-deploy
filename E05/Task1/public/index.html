@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Album Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Album Manager</h1>
+
+  <div>
+ <form id="albumForm">
+    <input type="text" name="artist" placeholder="Artist" required>
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="number" name="year" placeholder="Year" required>
+    <button type="submit">Sort</button>
+  </form>  </div>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Artist</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Genre</th>
+        <th>Tracks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="albums"></tbody>
+  </table>
+
+  <h2>Add Album</h2>
+  <div id="error-container"></div>
+  <form id="albumForm">
+    <input type="text" name="artist" placeholder="Artist" required>
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="number" name="year" placeholder="Year" required>
+    <input type="text" name="genre" placeholder="Genre" required>
+    <input type="text" name="tracks" placeholder="Track" required>
+    <button type="submit">Add Album</button>
+  </form>
+
+  <script src="script.js"></script>
+  <style>
+.error {
+  display: block;
+  color: red;
+  margin-bottom: 6px;
+}
+  </style>
+</body>
+</html>
