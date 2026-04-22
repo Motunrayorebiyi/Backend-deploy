@@ -2,10 +2,14 @@ import Albums from '../models/Albums.js'
 
 export async function getAllAlbums(req, res) {
   try {
-    const albums = await Albums.find().sort({ createdAt: -1 })
+    let query = Albums.find()
+    if (req.query.sort) {
+      query = query.sort(req.query.sort)
+    }
+    const albums = await query
     res.json(albums)
   } catch (error) {
-    res.status(500).json({ error: 'could not load albums' + error })
+    res.status(500).json({ error: 'could not load albums ' + error })
   }
 }
 
@@ -74,3 +78,5 @@ export async function deleteAlbum(req, res) {
     return res.status(500).json({ error: 'Failed to load albums' })
   }
 }
+
+

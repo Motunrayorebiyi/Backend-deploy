@@ -1,0 +1,131 @@
+import Albums from '../models/Albums.js'
+
+export async function getAllAlbums(req, res) {
+  try {
+    const filter = {}
+
+    if (req.query.year) {
+      filter.year = Number(req.query.year)
+    } else if (req.query.startYear || req.query.endYear) {
+      filter.year = {}
+
+      if (req.query.startYear) {
+        filter.year.$gte = Number(req.query.startYear)
+      }
+
+      if (req.query.endYear) {
+        filter.year.$lte = Number(req.query.endYear)
+      }
+    }
+
+    if (req.query.search) {
+      filter.$or = [
+        { artist: { $regex: req.query.search, $options: 'i' } },
+        { title: { $regex: req.query.search, $options: 'i' } },
+      ]
+    }
+
+    let query = Albums.find(filter)
+
+    if (req.query.sort) {
+      query = query.sort(req.query.sort)
+    }
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ')
+      query = query.select(fields)
+    }
+
+    const page = Math.max(Number(req.query.page) || 1, 1)
+    const limit = Math.max(Number(req.query.limit) || 10, 1)
+    const skip = (page - 1) * limit
+
+    query = query.skip(skip).limit(limit)
+
+    const albums = await query
+    const total = await Albums.countDocuments(filter)
+    const totalPages = Math.ceil(total / limit)
+
+    res.status(200).json({
+      metadata: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+      data: albums,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'could not load albums ' + error.message })
+  }
+}
+
+export async function getAlbumById(req, res) {
+  try {
+    const albums = await Albums.findById(req.params.id)
+    console.log(albums)
+    res.status(201).json(albums)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load albums' + error })
+  }
+}
+
+export async function createAlbum(req, res) {
+  const { artist, title, year, genre, tracks } = req.body
+  try {
+    const newAlbum = await Albums.create({
+      artist,
+      title,
+      year,
+      genre,
+      tracks,
+    })
+    return res.status(200).json({ message: 'Album Created', newAlbum })
+  } catch (error) {
+    console.error('FULL ERROR:', error)
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+export async function updateAlbum(req, res) {
+  try {
+    const updatedAlbum = await Albums.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      },
+    )
+    if (!updatedAlbum) {
+      return res.status(404).json({ message: 'Album not found' })
+    }
+
+    return res.status(201).json({ message: 'Album updated', updatedAlbum })
+  } catch (error) {
+    console.error('FULL ERROR:', error)
+
+    return res.status(500).json({ error: 'Failed to load albums' })
+  }
+}
+
+export async function deleteAlbum(req, res) {
+  const id = req.params.id
+  console.log(id)
+
+  try {
+    const updatedAlbum = await Albums.deleteOne({ _id: id })
+    if (!updatedAlbum) {
+      return res.status(404).json({ message: 'Album not found' })
+    }
+    return res.status(201).json({ message: 'Album Deleted', updatedAlbum })
+  } catch (error) {
+    console.error('FULL ERROR:', error)
+
+    return res.status(500).json({ error: 'Failed to load albums' })
+  }
+}
+
+

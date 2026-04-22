@@ -2,50 +2,47 @@
 const API_BASE = '/albums'
 
 const albumTable = document.getElementById('albums')
-const albumForm = document.getElementById('albumForm')
+const albumForm = document.getElementById('addAlbumForm')
+const sortBtn = document.getElementById('sortBtn')
+const sortField = document.getElementById('sortField')
 
-// Load albums from API (initial load)
-async function loadAlbums() {
+async function loadAlbums(sort = '') {
   try {
-    const response = await fetch(API_BASE);
-
-    const albums = await response.json();
-    displayAlbums(albums);
-
+    const url = sort ? `${API_BASE}?sort=${sort}` : API_BASE
+    const response = await fetch(url)
+    const albums = await response.json()
+    displayAlbums(albums)
   } catch (err) {
-    console.error("Error loading albums:", err);
-    showErrors(["Network error while loading albums"]);
+    console.error('Error loading albums:', err)
+    showErrors(['Network error while loading albums'])
   }
 }
 
 function showErrors(errors = []) {
-  const container = document.getElementById("error-container");
+  const container = document.getElementById('error-container')
 
   container.innerHTML = errors
-    .map(error => `<span class="error">${error}</span></br>`)
-    .join("");
+    .map((error) => `<span class="error">${error}</span>`)
+    .join('')
 }
 
 async function addAlbum(albumData) {
   try {
     const response = await fetch(API_BASE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(albumData),
-    });
+    })
 
     if (!response.ok) {
-      const data = await response.json();
-      showErrors(data.errors || [data.error] || ["Failed to add album"]);
-      return;
+      const data = await response.json()
+      showErrors(data.errors || [data.error] || ['Failed to add album'])
+      return
     }
 
-    const newAlbum = await response.json();
-    console.log(newAlbum);
-    appendAlbumToTable(newAlbum);
-
+    await loadAlbums(sortField.value)
   } catch (error) {
-    console.error("Error adding album:", error);
+    console.error('Error adding album:', error)
   }
 }
 
@@ -97,7 +94,11 @@ albumForm.addEventListener('submit', async (e) => {
   albumData.year = Number(albumData.year)
 
   await addAlbum(albumData)
-  //albumForm.reset();
+})
+
+sortBtn.addEventListener('click', async () => {
+  const sortValue = sortField.value
+  await loadAlbums(sortValue)
 })
 
 // Initial load

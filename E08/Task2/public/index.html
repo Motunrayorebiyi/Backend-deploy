@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Album Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Album Manager</h1>
+
+  <select id="sortField">
+    <option value="">Default</option>
+    <option value="artist">Artist A-Z</option>
+    <option value="-artist">Artist Z-A</option>
+    <option value="title">Title A-Z</option>
+    <option value="-title">Title Z-A</option>
+    <option value="year">Year ascending</option>
+    <option value="-year">Year descending</option>
+  </select>
+  <button type="button" id="sortBtn">Sort</button>
+
+  <input type="number" id="limitField" placeholder="Limit" value="5">
+  <button type="button" id="applyBtn">Apply</button>
+
+  
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Artist</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Genre</th>
+        <th>Tracks</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="albums"></tbody>
+  </table>
+
+  <h2>Add Album</h2>
+  <div id="error-container"></div>
+  <form id="addAlbumForm">
+    <input type="text" name="artist" placeholder="Artist" required>
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="number" name="year" placeholder="Year" required>
+    <input type="text" name="genre" placeholder="Genre" required>
+    <input type="text" name="tracks" placeholder="Track" required>
+    <button type="submit">Add Album</button>
+  </form>
+
+<div id="pagination-info"></div>
+<div>
+  <button type="button" id="prevBtn">Previous</button>
+  <span id="pageDisplay">Page 1</span>
+  <button type="button" id="nextBtn">Next</button>
+</div>
+
+  <script src="script.js"></script>
+  <style>
+    .error {
+      display: block;
+      color: red;
+      margin-bottom: 6px;
+    }
+  </style>
+</body>
+</html>
